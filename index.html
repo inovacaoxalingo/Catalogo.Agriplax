@@ -692,4 +692,12 @@ function renderSpecs(specs) {
   ).join('');
 }
 
-document.addEventListener('key
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('lightbox').classList.contains('open')) return;
+  if (e.key === 'ArrowRight') lbNav(1);
+  if (e.key === 'ArrowLeft')  lbNav(-1);
+  if (e.key === 'Escape')     closeLightbox();
+});
+</script>
+</body>
+</html>
