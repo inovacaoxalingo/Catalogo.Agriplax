@@ -31,15 +31,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);-we
 .hdr-inner{max-width:1240px;margin:0 auto;padding:28px 36px;display:flex;align-items:flex-start;gap:28px;position:relative}
 .logo-wrap{flex:1;min-width:0}
 .logo-mark{display:flex;align-items:center;gap:14px;margin-bottom:6px}
-.logo-arc{
-  width:46px;height:46px;border-radius:50%;flex-shrink:0;
-  background:linear-gradient(145deg,#F5B030 0%,var(--o1) 55%,#C85010 100%);
-  display:flex;align-items:center;justify-content:center;font-size:1.3rem;
-  box-shadow:0 3px 12px rgba(232,144,26,.4);
+.logo-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  background:#ffffff;
+  border-radius:16px;
+  padding:10px 28px;
+  margin-bottom:8px;
+  box-shadow:0 4px 18px rgba(0,0,0,.22);
 }
-.logo-text{font-family:'Barlow Condensed',sans-serif;font-size:2.8rem;font-weight:900;color:#fff;letter-spacing:-.5px;line-height:1}
-.logo-text span{color:var(--o1)}
-.logo-tagline{font-size:.8rem;color:rgba(255,255,255,.45);letter-spacing:.04em;margin-left:60px}
+.logo-img{height:72px;width:auto;display:block;}
+.logo-tagline{font-size:.8rem;color:rgba(255,255,255,.45);letter-spacing:.04em;}
 .hdr-middle{display:flex;gap:28px;align-items:center;padding-top:4px}
 .stat{text-align:center;flex-shrink:0}
 .stat-n{font-family:'Barlow Condensed',sans-serif;font-size:2.2rem;font-weight:700;color:var(--o1);line-height:1}
@@ -281,9 +282,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);-we
   <div class="hdr-bg"></div>
   <div class="hdr-inner">
     <div class="logo-wrap">
-      <div class="logo-mark">
-        <div class="logo-arc">🌿</div>
-        <div class="logo-text">Agri<span>pla</span>X</div>
+      <div class="logo-badge">
+        <img src="imagens/Agriplax_PNG.png" alt="AgriplaX" class="logo-img">
       </div>
       <div class="logo-tagline">Tecnologia e Inovação em Produtos Plásticos para o Agronegócio</div>
       <div class="hdr-middle" style="margin-top:14px">
