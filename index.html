@@ -418,7 +418,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);-we
         <div class="gal-counter" id="g-ctr"></div>
         <div class="gal-toolbar">
           <button class="gal-act" onclick="openZoom()">🔍 Ampliar</button>
-          <a id="g-download" class="gal-act dwn" style="display:none" download>⬇ Baixar Planta</a>
+          <button id="g-download" class="gal-act dwn" style="display:none" onclick="downloadPlanta()">⬇ Baixar Planta</button>
         </div>
         <div class="gal-thumbs" id="g-thumbs" style="display:none"></div>
       </div>
@@ -499,7 +499,7 @@ const PRODUCTS = [
     cores:{ g:['Cor'], h:{'Cor':['#1a1a1a']}, n:{'Cor':['Preto']} },
     fotos: [
       'imagens/00000-PORTA_BICO_FOTO1.png',
-      '2dimagens/Porta Bico.png'
+      '2dimagens/Porta Blco.png'
     ],
     obs:'Para plantadeiras 45-50 GTS'
   },
@@ -776,7 +776,7 @@ function openMod(num){
   specs.push({l:'Material',  v:mp.material});
   specs.push({l:'Dimensões', v:mp.dim, full:!mp.cap});
   if(mp.cap) specs.push({l:'Capacidade', v:mp.cap, hi:true});
-  specs.push({l:'Galeria de fotos', v:`${mp.fotos.length} imagem${mp.fotos.length!==1?'ns':''}`});
+  specs.push({l:'Galeria de fotos', v:`${mp.fotos.length} imagem${mp.fotos.length!==1?'s':''}`});
 
   document.getElementById('m-specs').innerHTML = specs.map(s=>
     `<div class="si${s.full?' sg-full':''}">
@@ -877,6 +877,41 @@ function imgErr(el){
   ph.textContent = CAT_PH[mp?.cat]||'📦';
   ph.style.display = 'block';
   el.classList.remove('fade');
+}
+
+/* ── Download com fundo branco ──────────────────────── */
+function downloadPlanta(){
+  const src = mp.fotos[gi];
+  const filename = src.replace('2dimagens/','').replace(/\.[^.]+$/, '') + '.png';
+  const btn = document.getElementById('g-download');
+  btn.textContent = '⏳ Gerando...';
+  btn.style.pointerEvents = 'none';
+
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = ()=>{
+    const canvas = document.createElement('canvas');
+    // Margem extra de 40px em volta
+    const pad = 40;
+    canvas.width  = img.naturalWidth  + pad * 2;
+    canvas.height = img.naturalHeight + pad * 2;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, pad, pad);
+    const a = document.createElement('a');
+    a.href     = canvas.toDataURL('image/png');
+    a.download = filename;
+    a.click();
+    btn.textContent = '⬇ Baixar Planta';
+    btn.style.pointerEvents = '';
+  };
+  img.onerror = ()=>{
+    btn.textContent = '⬇ Baixar Planta';
+    btn.style.pointerEvents = '';
+    alert('Não foi possível gerar a imagem. Verifique se o arquivo existe.');
+  };
+  img.src = src + '?t=' + Date.now(); // evita cache CORS
 }
 
 /* ── Zoom lightbox ──────────────────────────────────── */
