@@ -384,19 +384,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);-we
 </footer>
 
 <script>
-/* ─────────────────────────────────────────────────────────────
-   CONVENÇÃO DE ARQUIVOS DE IMAGEM — PASTA FLAT
-   ─────────────────────────────────────────────────────────────
-   Todas as imagens ficam na mesma pasta do HTML (sem subpastas).
-   Nomenclatura: [CODIGO]-[NOME_PRODUTO]_FOTO[N].[jpg|png]
-
-   Exemplos:
-     30993-RESERVATORIO_ADUBO_170L_FOTO1.jpg
-     09811-RESERVATORIO_SEMENTES_33L_FOTO2.jpg
-     00000-BICO_CENTRAL_FOTO1.png
-     31359-DEDO_RECOLHEDOR_FOTO1.png
-───────────────────────────────────────────────────────────── */
-
 const CATS = {
   acessorios:   { label:'Peças e Acessórios' },
   adubo:        { label:'Reservatório de Adubo' },
@@ -416,20 +403,22 @@ const CAT_PH = { acessorios:'⚙️', adubo:'📦', sementes:'🌾', distribuica
 const PRODUCTS = [
   // ── Peças e Acessórios ──────────────────────────────────
   {
-    num:'01', nome:'Bico Central 45-50 GTS', cat:'acessorios',
+    num:'01', nome:'Bico Central 45-50 GTS IPM000000511', cat:'acessorios',
     material:'Polietileno', dim:'975 × 350 × 377 mm', cap:null,
     cores:{ g:['Cor'], h:{'Cor':['#1a1a1a']}, n:{'Cor':['Preto']} },
     fotos: [
-      'imagens/00000-BICO_CENTRAL_FOTO1.png'
+      'imagens/00000-BICO_CENTRAL_FOTO1.png',
+      '2dimagens/Bico Central.png'
     ],
     obs:'Para plantadeiras 45-50 GTS'
   },
   {
-    num:'02', nome:'Porta Bico 45-50 GTS', cat:'acessorios',
+    num:'02', nome:'Porta Bico 45-50 GTS IPM000000884', cat:'acessorios',
     material:'Polietileno', dim:'821 × 340 × 225 mm', cap:null,
     cores:{ g:['Cor'], h:{'Cor':['#1a1a1a']}, n:{'Cor':['Preto']} },
     fotos: [
-      'imagens/00000-PORTA_BICO_FOTO1.png'
+      'imagens/00000-PORTA_BICO_FOTO1.png',
+      '2dimagens/Porta Blco.png'
     ],
     obs:'Para plantadeiras 45-50 GTS'
   },
@@ -438,7 +427,8 @@ const PRODUCTS = [
     material:'Polipropileno', dim:'31 × 45 × 357 mm', cap:null,
     cores:{ g:['Cor'], h:{'Cor':['#1a1a1a']}, n:{'Cor':['Preto']} },
     fotos: [
-      'imagens/31359-DEDO_RECOLHEDOR_FOTO1.png'
+      'imagens/31359-DEDO_RECOLHEDOR_FOTO1.png',
+      '2dimagens/Dedo Recolhedor.png'
     ],
     obs:null
   },
@@ -455,7 +445,8 @@ const PRODUCTS = [
       'imagens/00000-RESERVATORIO_ADUBO_170L_FOTO1.png',
       'imagens/30993-RESERVATORIO_ ADUBO_170L_FOTO1.jpg',
       'imagens/30993-RESERVATORIO_ ADUBO_170L_FOTO2.jpg',
-      'imagens/30993-RESERVATORIO_ ADUBO_170L_FOTO3.jpg'
+      'imagens/30993-RESERVATORIO_ ADUBO_170L_FOTO3.jpg',
+      '2dimagens/Reservatório de Adubo 170 litros.png'
     ],
     obs:null
   },
@@ -470,7 +461,8 @@ const PRODUCTS = [
     fotos: [
       'imagens/30996-RESERVATORIO_ ADUBO_270L_FOTO1.jpg',
       'imagens/30996-RESERVATORIO_ ADUBO_270L_FOTO2.jpg',
-      'imagens/30996-RESERVATORIO_ ADUBO_270L_FOTO3.jpg'
+      'imagens/30996-RESERVATORIO_ ADUBO_270L_FOTO3.jpg',
+      '2dimagens/Reservatório de Adubo 270 litros.png'
     ],
     obs:null
   },
@@ -483,7 +475,8 @@ const PRODUCTS = [
       n:{ 'Reservatório':['Branco','Amarelo','Vermelho','Verde'],   'Tampa':['Preto','Azul','Verde','Vermelho'] }
     },
     fotos: [
-      'imagens/00000-RESERVATORIO_ADUBO_320L_FOTO1.png'
+      'imagens/00000-RESERVATORIO_ADUBO_320L_FOTO1.png',
+      '2dimagens/Reservatório de Adubo 320 litros.png'
     ],
     obs:null
   },
@@ -496,7 +489,8 @@ const PRODUCTS = [
       n:{ 'Reservatório':['Branco','Amarelo','Vermelho','Verde'],   'Tampa':['Preto','Azul','Verde','Vermelho'] }
     },
     fotos: [
-      'imagens/00000-RESERVATORIO_ADUBO_370L_FOTO1.png'
+      'imagens/00000-RESERVATORIO_ADUBO_370L_FOTO1.png',
+      '2dimagens/Reservatório de Adubo 370 litros.png'
     ],
     obs:null
   },
@@ -509,7 +503,8 @@ const PRODUCTS = [
       n:{ 'Reservatório':['Branco','Amarelo','Vermelho','Verde'],   'Tampa':['Preto','Azul','Verde','Vermelho'] }
     },
     fotos: [
-      'imagens/00000-RESERVATORIO_ADUBO_510L_FOTO1 ALTERAR FOTO, ESTÁ BAIXA QUALIDADE.png'
+      'imagens/00000-RESERVATORIO_ADUBO_510L_FOTO1 ALTERAR FOTO, ESTÁ BAIXA QUALIDADE.png',
+      '2dimagens/Reservatório de Adubo 510 litros.png'
     ],
     obs:null
   },
@@ -522,7 +517,8 @@ const PRODUCTS = [
       n:{ 'Reservatório':['Branco','Amarelo','Vermelho','Verde'],   'Tampa':['Preto','Azul','Verde','Vermelho'] }
     },
     fotos: [
-      'imagens/00000-RESERVATORIO_ADUBO_680L_FOTO1.png'
+      'imagens/00000-RESERVATORIO_ADUBO_680L_FOTO1.png',
+      '2dimagens/Reservatório de Adubo 680 litros.png'
     ],
     obs:null
   },
@@ -539,7 +535,8 @@ const PRODUCTS = [
       'imagens/09811-RESERVATORIO_SEMENTE_33L.png',
       'imagens/09811-RESERVATORIO_SEMENTES33L_FOTO1.jpg',
       'imagens/09811-RESERVATORIO_SEMENTES33L_FOTO2.jpg',
-      'imagens/09811-RESERVATORIO_SEMENTES33L_FOTO3.jpg'
+      'imagens/09811-RESERVATORIO_SEMENTES33L_FOTO3.jpg',
+      '2dimagens/Reservatório de Sementes 33 litros.png'
     ],
     obs:null
   },
@@ -555,7 +552,8 @@ const PRODUCTS = [
       'imagens/00000-RESERVATORIO_SEMENTE_43L_FOTO1.png',
       'imagens/30130- RESERVATORIO_SEMENTES43L _FOTO1.jpg',
       'imagens/30130- RESERVATORIO_SEMENTES43L _FOTO2.jpg',
-      'imagens/30130- RESERVATORIO_SEMENTES43L _FOTO3.jpg'
+      'imagens/30130- RESERVATORIO_SEMENTES43L _FOTO3.jpg',
+      '2dimagens/Reservatório de Sementes 43 litros.png'
     ],
     obs:null
   },
@@ -572,7 +570,8 @@ const PRODUCTS = [
       'imagens/30500-FUNIL_DISTRIBUIDOR_490L_FOTO1.png',
       'imagens/30500-FUNIL_DISTRIBUIDOR_490L_FOTO1.jpg',
       'imagens/30500-FUNIL_DISTRIBUIDOR_490L_FOTO2.jpg',
-      'imagens/30500-FUNIL_DISTRIBUIDOR_490L_FOTO3.jpg'
+      'imagens/30500-FUNIL_DISTRIBUIDOR_490L_FOTO3.jpg',
+      '2dimagens/Funis Distribuidor 490 litros.png'
     ],
     obs:'Chapéu chinês disponível sob consulta'
   },
@@ -590,7 +589,8 @@ const PRODUCTS = [
       'imagens/30821-FUNIL_DISTRIBUIDOR_600L_FOTO2.jpg',
       'imagens/30821-FUNIL_DISTRIBUIDOR_600L_FOTO3.jpg',
       'imagens/30821-FUNIL_DISTRIBUIDOR_600L_FOTO4.jpg',
-      'imagens/30821-FUNIL_DISTRIBUIDOR_600L_FOTO5.jpg'
+      'imagens/30821-FUNIL_DISTRIBUIDOR_600L_FOTO5.jpg',
+      '2dimagens/Funil Distribuidor 600 litros.png'
     ],
     obs:'Chapéu chinês disponível sob consulta'
   },
@@ -609,7 +609,8 @@ const PRODUCTS = [
       'imagens/30946-RESERVATORIO_ DISTRIBUIDOR_ DUPLO_1300L_FOTO3.jpg',
       'imagens/30946-RESERVATORIO_ DISTRIBUIDOR_ DUPLO_1300L_FOTO4.jpg',
       'imagens/30946-RESERVATORIO_ DISTRIBUIDOR_ DUPLO_1300L_FOTO5.jpg',
-      'imagens/30946-RESERVATORIO_ DISTRIBUIDOR_ DUPLO_1300L_FOTO6.jpg'
+      'imagens/30946-RESERVATORIO_ DISTRIBUIDOR_ DUPLO_1300L_FOTO6.jpg',
+      '2dimagens/Reservatório Distribuidor 1300 litros.png'
     ],
     obs:null
   }
@@ -617,7 +618,7 @@ const PRODUCTS = [
 
 /* ── State ──────────────────────────────────────────── */
 let curCat = 'all', curQ = '';
-let mp = null, gi = 0;   // modal product, gallery index
+let mp = null, gi = 0;
 
 /* ── Filter ─────────────────────────────────────────── */
 function filtered(){
@@ -690,7 +691,6 @@ function openMod(num){
   document.getElementById('m-badge').style.cssText = CAT_BADGE[mp.cat];
   document.getElementById('m-title').textContent = mp.nome;
 
-  // Specs
   const specs = [];
   specs.push({l:'Material',  v:mp.material});
   specs.push({l:'Dimensões', v:mp.dim, full:!mp.cap});
@@ -704,7 +704,6 @@ function openMod(num){
     </div>`
   ).join('');
 
-  // Colors
   const cEl = document.getElementById('m-colors');
   if(mp.cores && mp.cores.g.length){
     const groups = mp.cores.g.map(tipo=>{
@@ -725,7 +724,6 @@ function openMod(num){
     cEl.innerHTML = '';
   }
 
-  // Obs
   document.getElementById('m-obs').innerHTML = mp.obs
     ? `<div class="m-obs">ℹ️ ${mp.obs}</div>` : '';
 
@@ -737,20 +735,20 @@ function openMod(num){
 /* ── Gallery ────────────────────────────────────────── */
 function renderGallery(){
   const n = mp.fotos.length;
-  const img   = document.getElementById('g-img');
-  const ph    = document.getElementById('g-ph');
-  const ctr   = document.getElementById('g-ctr');
+  const img    = document.getElementById('g-img');
+  const ph     = document.getElementById('g-ph');
+  const ctr    = document.getElementById('g-ctr');
   const thumbs = document.getElementById('g-thumbs');
-  const al    = document.getElementById('garr-l');
-  const ar    = document.getElementById('garr-r');
+  const al     = document.getElementById('garr-l');
+  const ar     = document.getElementById('garr-r');
 
-  img.style.display = 'block';
-  ph.style.display  = 'none';
   img.classList.add('fade');
   img.onload  = ()=>img.classList.remove('fade');
   img.onerror = ()=>imgErr(img);
   img.src = mp.fotos[gi];
   img.alt = `${mp.nome} — imagem ${gi+1}`;
+  img.style.display = 'block';
+  ph.style.display  = 'none';
 
   if(n > 1){
     ctr.textContent = `${gi+1} / ${n}`;
@@ -764,7 +762,8 @@ function renderGallery(){
     ).join('');
   } else {
     ctr.textContent  = '';
-    al.style.display = ar.style.display = thumbs.style.display = 'none';
+    al.style.display = ar.style.display = 'none';
+    thumbs.style.display = 'none';
   }
 }
 
