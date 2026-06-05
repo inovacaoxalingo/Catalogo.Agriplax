@@ -199,6 +199,67 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);-we
 .gth.on{border-color:var(--o1)}
 .gth:hover:not(.on){border-color:var(--g2)}
 
+/* Gallery toolbar */
+.gal-toolbar{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:8px 12px;border-top:1px solid var(--bdr);background:var(--surf);flex-shrink:0;
+}
+.gal-act{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:6px 13px;border-radius:var(--rs);border:1.5px solid var(--bdr);
+  background:var(--surf);cursor:pointer;font-size:.74rem;font-weight:600;
+  color:var(--t2);transition:all .15s;font-family:'DM Sans',sans-serif;white-space:nowrap;
+}
+.gal-act:hover{border-color:var(--g2);color:var(--g1);background:var(--g3)}
+.gal-act.dwn{border-color:rgba(217,122,16,.35);color:var(--o0);background:var(--o2)}
+.gal-act.dwn:hover{border-color:var(--o0);background:rgba(232,144,26,.18)}
+
+/* Zoom lightbox */
+.zoom-ov{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.93);
+  z-index:200;flex-direction:column;align-items:center;justify-content:center;
+}
+.zoom-ov.open{display:flex}
+.zoom-cls{
+  position:absolute;top:16px;right:16px;width:40px;height:40px;border-radius:50%;
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);
+  color:#fff;font-size:1rem;font-weight:700;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all .15s;z-index:10;
+}
+.zoom-cls:hover{background:rgba(255,255,255,.24)}
+.zoom-wrap{
+  width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+  overflow:hidden;cursor:grab;
+}
+.zoom-wrap.dragging{cursor:grabbing}
+.zoom-wrap img{
+  max-width:92vw;max-height:88vh;object-fit:contain;
+  transform-origin:center center;
+  pointer-events:none;user-select:none;
+  border-radius:6px;
+}
+.zoom-ctrls{
+  position:absolute;bottom:20px;right:20px;
+  display:flex;gap:8px;align-items:center;
+}
+.zoom-btn{
+  width:38px;height:38px;border-radius:50%;
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);
+  color:#fff;font-size:1.1rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all .15s;
+}
+.zoom-btn:hover{background:rgba(255,255,255,.24)}
+.zoom-info{
+  position:absolute;bottom:28px;left:20px;
+  font-size:.68rem;color:rgba(255,255,255,.38);
+}
+.zoom-name{
+  position:absolute;top:16px;left:50%;transform:translateX(-50%);
+  font-size:.78rem;color:rgba(255,255,255,.55);font-weight:500;
+  background:rgba(0,0,0,.3);padding:5px 14px;border-radius:100px;
+  white-space:nowrap;max-width:60vw;overflow:hidden;text-overflow:ellipsis;
+}
+
 /* Info side */
 .minfo{flex:1;display:flex;flex-direction:column;overflow:hidden}
 .mscroll{flex:1;overflow-y:auto;padding:24px 26px}
@@ -354,6 +415,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);-we
           <button class="garr right" id="garr-r" onclick="galStep(1)">›</button>
         </div>
         <div class="gal-counter" id="g-ctr"></div>
+        <div class="gal-toolbar">
+          <button class="gal-act" onclick="openZoom()">🔍 Ampliar</button>
+          <a id="g-download" class="gal-act dwn" style="display:none" download>⬇ Baixar Planta</a>
+        </div>
         <div class="gal-thumbs" id="g-thumbs" style="display:none"></div>
       </div>
 
@@ -371,6 +436,21 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);-we
 
     </div>
   </div>
+</div>
+
+<!-- ══ ZOOM LIGHTBOX ════════════════════════════════════════ -->
+<div class="zoom-ov" id="zoom-ov">
+  <div class="zoom-name" id="zoom-name"></div>
+  <button class="zoom-cls" onclick="closeZoom()">✕</button>
+  <div class="zoom-wrap" id="zoom-wrap">
+    <img id="zoom-img" src="" alt="">
+  </div>
+  <div class="zoom-ctrls">
+    <button class="zoom-btn" onclick="zoomOut()" title="Afastar">−</button>
+    <button class="zoom-btn" onclick="zoomReset()" title="Resetar" style="font-size:.65rem;font-weight:700;">100%</button>
+    <button class="zoom-btn" onclick="zoomIn()" title="Aproximar">+</button>
+  </div>
+  <div class="zoom-info">Scroll para zoom · Arraste para mover · ESC para fechar</div>
 </div>
 
 <!-- ══ FOOTER ══════════════════════════════════════════════ -->
@@ -741,6 +821,7 @@ function renderGallery(){
   const thumbs = document.getElementById('g-thumbs');
   const al     = document.getElementById('garr-l');
   const ar     = document.getElementById('garr-r');
+  const dlBtn  = document.getElementById('g-download');
 
   img.classList.add('fade');
   img.onload  = ()=>img.classList.remove('fade');
@@ -748,7 +829,19 @@ function renderGallery(){
   img.src = mp.fotos[gi];
   img.alt = `${mp.nome} — imagem ${gi+1}`;
   img.style.display = 'block';
+  img.style.cursor  = 'zoom-in';
+  img.onclick = openZoom;
   ph.style.display  = 'none';
+
+  // Botão download: só para imagens 2D
+  const is2D = mp.fotos[gi].startsWith('2dimagens/');
+  if(is2D){
+    dlBtn.href     = mp.fotos[gi];
+    dlBtn.download = mp.fotos[gi].replace('2dimagens/','');
+    dlBtn.style.display = 'inline-flex';
+  } else {
+    dlBtn.style.display = 'none';
+  }
 
   if(n > 1){
     ctr.textContent = `${gi+1} / ${n}`;
@@ -785,6 +878,69 @@ function imgErr(el){
   el.classList.remove('fade');
 }
 
+/* ── Zoom lightbox ──────────────────────────────────── */
+let zScale = 1, zX = 0, zY = 0, zDragging = false, zDragSX, zDragSY;
+
+function openZoom(){
+  const src = document.getElementById('g-img').src;
+  if(!src) return;
+  zScale = 1; zX = 0; zY = 0;
+  const zImg = document.getElementById('zoom-img');
+  zImg.src = src;
+  applyZoomTransform();
+  document.getElementById('zoom-name').textContent = mp.nome;
+  document.getElementById('zoom-ov').classList.add('open');
+}
+
+function closeZoom(){
+  document.getElementById('zoom-ov').classList.remove('open');
+}
+
+function applyZoomTransform(){
+  const img = document.getElementById('zoom-img');
+  img.style.transform = `translate(${zX}px,${zY}px) scale(${zScale})`;
+}
+
+function zoomIn(){ zScale = Math.min(zScale + 0.4, 6); applyZoomTransform(); }
+function zoomOut(){ zScale = Math.max(zScale - 0.4, 0.5); if(zScale<=1){zX=0;zY=0;} applyZoomTransform(); }
+function zoomReset(){ zScale=1; zX=0; zY=0; applyZoomTransform(); }
+
+// Scroll to zoom
+document.getElementById('zoom-ov').addEventListener('wheel', e=>{
+  e.preventDefault();
+  const delta = e.deltaY < 0 ? 0.25 : -0.25;
+  zScale = Math.max(0.5, Math.min(6, zScale + delta));
+  if(zScale<=1){zX=0;zY=0;}
+  applyZoomTransform();
+}, {passive:false});
+
+// Drag to pan
+const zWrap = document.getElementById('zoom-wrap');
+zWrap.addEventListener('mousedown', e=>{
+  if(zScale<=1) return;
+  zDragging=true; zDragSX=e.clientX-zX; zDragSY=e.clientY-zY;
+  zWrap.classList.add('dragging');
+});
+window.addEventListener('mousemove', e=>{
+  if(!zDragging) return;
+  zX=e.clientX-zDragSX; zY=e.clientY-zDragSY;
+  applyZoomTransform();
+});
+window.addEventListener('mouseup', ()=>{ zDragging=false; zWrap.classList.remove('dragging'); });
+
+// Touch drag
+zWrap.addEventListener('touchstart', e=>{
+  if(e.touches.length!==1||zScale<=1) return;
+  zDragging=true; zDragSX=e.touches[0].clientX-zX; zDragSY=e.touches[0].clientY-zY;
+},{passive:true});
+zWrap.addEventListener('touchmove', e=>{
+  if(!zDragging||e.touches.length!==1) return;
+  e.preventDefault();
+  zX=e.touches[0].clientX-zDragSX; zY=e.touches[0].clientY-zDragSY;
+  applyZoomTransform();
+},{passive:false});
+zWrap.addEventListener('touchend', ()=>{ zDragging=false; });
+
 /* ── Modal close ────────────────────────────────────── */
 function closeMod(){
   document.getElementById('ov').classList.remove('open');
@@ -793,6 +949,12 @@ function closeMod(){
 }
 function ovClick(e){ if(e.target===document.getElementById('ov')) closeMod(); }
 document.addEventListener('keydown', e=>{
+  if(document.getElementById('zoom-ov').classList.contains('open')){
+    if(e.key==='Escape') closeZoom();
+    if(e.key==='+'||e.key==='=') zoomIn();
+    if(e.key==='-') zoomOut();
+    return;
+  }
   if(!mp) return;
   if(e.key==='Escape') closeMod();
   if(e.key==='ArrowLeft')  galStep(-1);
