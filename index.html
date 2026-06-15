@@ -911,7 +911,7 @@ function openMod(num){
   specs.push({l:'Material',  v:mp.material});
   if(mp.dim) specs.push({l:'Dimensões', v:mp.dim, full:!mp.cap});
   if(mp.cap) specs.push({l:'Capacidade', v:mp.cap, hi:true});
-  specs.push({l:'Galeria de fotos', v:`${mp.fotos.length} imagem${mp.fotos.length!==1?'s':''}`});
+  specs.push({l:'Galeria de fotos', v:`${mp.fotos.length} ${mp.fotos.length!==1?'imagens':'imagem'}`});
 
   document.getElementById('m-specs').innerHTML = specs.map(s=>
     `<div class="si${s.full?' sg-full':''}">
