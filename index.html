@@ -148,6 +148,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);-we
 .cat-sementes .c-cat-tag{background:#E6F2EC;color:#1A6040}
 .cat-distribuicao .c-img{background:#F0F5FF}
 .cat-distribuicao .c-cat-tag{background:#EBF1FF;color:#1A3D8A}
+.cat-fumageiras .c-img{background:#F0FBF4}
+.cat-fumageiras .c-cat-tag{background:#DCFCE7;color:#14532D}
 
 /* ═══ MODAL ════════════════════════════════════════════════ */
 .ov{
@@ -356,9 +358,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);-we
       </div>
       <div class="logo-tagline">Tecnologia e Inovação em Produtos Plásticos para o Agronegócio</div>
       <div class="hdr-middle" style="margin-top:14px">
-        <div class="stat"><div class="stat-n" id="stat-total">14</div><div class="stat-l">Produtos</div></div>
+        <div class="stat"><div class="stat-n" id="stat-total">20</div><div class="stat-l">Produtos</div></div>
         <div class="hdr-sep"></div>
-        <div class="stat"><div class="stat-n">4</div><div class="stat-l">Categorias</div></div>
+        <div class="stat"><div class="stat-n">5</div><div class="stat-l">Categorias</div></div>
         <div class="hdr-sep"></div>
         <div class="stat"><div class="stat-n">100%</div><div class="stat-l">Polietileno</div></div>
         <div class="iso-badge">✓ ISO 9001</div>
@@ -378,19 +380,22 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);-we
 <nav class="cat-nav">
   <div class="cat-inner">
     <button class="cat-btn active" data-cat="all" onclick="setFilter('all',this)">
-      Todos <span class="cat-pill" id="cp-all">14</span>
+      Todos <span class="cat-pill" id="cp-all">20</span>
     </button>
     <button class="cat-btn" data-cat="acessorios" onclick="setFilter('acessorios',this)">
-      Peças e Acessórios <span class="cat-pill" id="cp-acessorios">3</span>
+      Peças e Acessórios <span class="cat-pill" id="cp-acessorios">4</span>
     </button>
     <button class="cat-btn" data-cat="adubo" onclick="setFilter('adubo',this)">
       Reservatório de Adubo <span class="cat-pill" id="cp-adubo">6</span>
     </button>
     <button class="cat-btn" data-cat="sementes" onclick="setFilter('sementes',this)">
-      Reservatório de Sementes <span class="cat-pill" id="cp-sementes">2</span>
+      Reservatório de Sementes <span class="cat-pill" id="cp-sementes">3</span>
     </button>
     <button class="cat-btn" data-cat="distribuicao" onclick="setFilter('distribuicao',this)">
       Distribuição <span class="cat-pill" id="cp-distribuicao">3</span>
+    </button>
+    <button class="cat-btn" data-cat="fumageiras" onclick="setFilter('fumageiras',this)">
+      Fumageiras <span class="cat-pill" id="cp-fumageiras">4</span>
     </button>
   </div>
 </nav>
@@ -477,17 +482,19 @@ const CATS = {
   acessorios:   { label:'Peças e Acessórios' },
   adubo:        { label:'Reservatório de Adubo' },
   sementes:     { label:'Reservatório de Sementes' },
-  distribuicao: { label:'Distribuição' }
+  distribuicao: { label:'Distribuição' },
+  fumageiras:   { label:'Fumageiras' }
 };
 
 const CAT_BADGE = {
   acessorios:   'background:#EAECF0;color:#44546A',
   adubo:        'background:#FEF3E4;color:#8C4C00',
   sementes:     'background:#E6F2EC;color:#1A6040',
-  distribuicao: 'background:#EBF1FF;color:#1A3D8A'
+  distribuicao: 'background:#EBF1FF;color:#1A3D8A',
+  fumageiras:   'background:#DCFCE7;color:#14532D'
 };
 
-const CAT_PH = { acessorios:'⚙️', adubo:'📦', sementes:'🌾', distribuicao:'🔵' };
+const CAT_PH = { acessorios:'⚙️', adubo:'📦', sementes:'🌾', distribuicao:'🔵', fumageiras:'🌿' };
 
 const PRODUCTS = [
   // ── Peças e Acessórios ──────────────────────────────────
@@ -702,6 +709,71 @@ const PRODUCTS = [
       '2dimagens/Reservatório Distribuidor 1300 litros.png'
     ],
     obs:null
+  },
+  // ── Caixa Multiuso ─────────────────────────────────────
+  {
+    num:'15', nome:'Caixa Multiuso', cat:'acessorios',
+    material:'Polietileno Rotomoldado', dim:'500 × 600 × 670 mm', cap:'160 L',
+    cores:{ g:['Cor'], h:{'Cor':['#1a1a1a']}, n:{'Cor':['Preto']} },
+    fotos: [
+      'imagens/Caixa Multiuso 1.png',
+      'imagens/Caixa Multiuso 2.png',
+      'imagens/Caixa Multiuso 3.png'
+    ],
+    obs:'Fabricada em polietileno rotomoldado. Sistema de vedação para impossibilitar entrada de poeira e líquidos. Leve e resistente.'
+  },
+  // ── Reservatório de Sementes Tatu ──────────────────────
+  {
+    num:'16', nome:'Reservatório de Semente Tatu 0503031508', cat:'sementes',
+    material:'Polietileno', dim:'571 × 399 × 391 mm', cap:'48 L',
+    cores:{
+      g:['Cor'],
+      h:{ 'Cor':['#e8c62d','#1a2d6e'] },
+      n:{ 'Cor':['Amarelo','Azul Marinho'] }
+    },
+    fotos: [
+      'imagens/Reservatório de Sementes Tatu 1.png',
+      'imagens/Reservatório de Sementes Tatu 2.png',
+      '2dimagens/Reservatório de Sementes Tatu 48 litros.png'
+    ],
+    obs:null
+  },
+  // ── Fumageiras ─────────────────────────────────────────
+  {
+    num:'17', nome:'Adubadeira Manual 10 Litros', cat:'fumageiras',
+    material:'Polietileno', dim:null, cap:'10 L',
+    cores:{ g:['Cor'], h:{'Cor':['#1a5fa8']}, n:{'Cor':['Azul']} },
+    fotos: [
+      'imagens/0333.2 - Adubadeira Manual 10 Litros - Azul.png'
+    ],
+    obs:'Solução perfeita para a aplicação uniforme de fertilizantes líquidos ou granulados. Design ergonômico proporcionando conforto e eficiência no manuseio.'
+  },
+  {
+    num:'18', nome:'Aplicador de Grânulos para Adubadeira', cat:'fumageiras',
+    material:'Polietileno', dim:null, cap:null,
+    cores:{ g:['Cor'], h:{'Cor':['#27ae60']}, n:{'Cor':['Verde']} },
+    fotos: [
+      'imagens/0334.3 - Aplicador de Granulos - Verde.png'
+    ],
+    obs:'Kit com 3 opções de montagem: Regador com Chuveirinho, Regador Convencional e Espalhador de Granulados. Bico espalhador com sistema de fechamento. Conjunto com tampa de fechamento.'
+  },
+  {
+    num:'19', nome:'Bico Aplicador Anti Brotante', cat:'fumageiras',
+    material:'Polietileno', dim:null, cap:null,
+    cores:{ g:['Cor'], h:{'Cor':['#27ae60']}, n:{'Cor':['Verde']} },
+    fotos: [
+      'imagens/3083.9 - Bico Aplicador Anti Brotante - Verde - 03.png'
+    ],
+    obs:'Permite a aplicação de produtos em áreas localizadas com jato contínuo. Ideal para a cultura do Fumo. Praticidade e eficiência em distribuir a dose certa.'
+  },
+  {
+    num:'20', nome:'Colher Dosadora', cat:'fumageiras',
+    material:'Polietileno', dim:null, cap:null,
+    cores:{ g:['Cor'], h:{'Cor':['#27ae60','#e8c62d']}, n:{'Cor':['Verde','Amarelo']} },
+    fotos: [
+      'imagens/0807.7 - Colher Dosadora.png'
+    ],
+    obs:'Usada para medir as quantidades exatas do fitossanitário ou fertilizante a ser aplicado no cultivo. Disponível em diferentes tamanhos padronizados.'
   }
 ];
 
@@ -762,7 +834,7 @@ function renderGrid(){
     <div class="c-chips">
       <span class="chip">${p.material}</span>
       ${capChip}
-      <span class="chip dim">${p.dim}</span>
+      ${p.dim ? `<span class="chip dim">${p.dim}</span>` : ''}
     </div>
   </div>
 </div>`;
@@ -782,7 +854,7 @@ function openMod(num){
 
   const specs = [];
   specs.push({l:'Material',  v:mp.material});
-  specs.push({l:'Dimensões', v:mp.dim, full:!mp.cap});
+  if(mp.dim) specs.push({l:'Dimensões', v:mp.dim, full:!mp.cap});
   if(mp.cap) specs.push({l:'Capacidade', v:mp.cap, hi:true});
   specs.push({l:'Galeria de fotos', v:`${mp.fotos.length} imagem${mp.fotos.length!==1?'s':''}`});
 
