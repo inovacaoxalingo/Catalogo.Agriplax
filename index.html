@@ -15,6 +15,7 @@
   gtag('js', new Date());
   gtag('config', 'G-ZMKZS1TYL8');
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -102,7 +103,22 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);-we
 .srch-ico{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--t3);font-size:.85rem;pointer-events:none}
 .rcnt{font-size:.82rem;color:var(--t3);margin-left:auto;font-weight:500}
 
-/* ═══ BOTÃO DOWNLOAD PDF ════════════════════════════════ */
+/* ═══ PRINT / PDF ════════════════════════════════════════ */
+@media print{
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  .cat-nav,.toolbar,.ov,.zoom-ov,footer,.dl-pdf,.garr,.gal-toolbar,.gal-thumbs,.mcls{display:none!important}
+  body{background:#fff;color:#000}
+  .hdr{background:var(--g0)!important;-webkit-print-color-adjust:exact}
+  .hdr-bg{display:none}
+  .hdr-inner{padding:0 24px 18px}
+  .hdr-card{display:flex!important;border-color:rgba(255,255,255,.2)}
+  .grid-wrap{padding:16px 24px 24px}
+  .grid{grid-template-columns:repeat(3,1fr);gap:14px}
+  .card{break-inside:avoid;box-shadow:none;border:1px solid #ccc}
+  .c-img{aspect-ratio:4/3}
+  .c-img img{padding:10px}
+  @page{margin:12mm 10mm;size:A4}
+}
 .dl-pdf{
   display:inline-flex;align-items:center;gap:8px;
   padding:9px 18px;
@@ -435,9 +451,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);-we
     <span class="srch-ico">🔍</span>
     <input type="text" id="q" placeholder="Buscar produto..." oninput="doSearch()">
   </div>
-  <a href="Catalogo_AgriplaX.pdf" download
-     class="dl-pdf"
-     onclick="gtag('event', 'download_catalogo', { catalogo: 'AgriplaX', formato: 'PDF' });">
+  <a href="#" class="dl-pdf" id="btn-pdf" onclick="gerarPDF(); return false;">
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
     </svg>
@@ -886,6 +900,8 @@ function openMod(num){
   if(!mp) return;
   gi = 0;
 
+  gtag('event', 'visualizar_produto', { produto: mp.nome, codigo: mp.num, categoria: CATS[mp.cat]?.label });
+
   document.getElementById('m-ol').textContent    = `Produto Nº ${mp.num}`;
   document.getElementById('m-badge').textContent = CATS[mp.cat].label;
   document.getElementById('m-badge').style.cssText = CAT_BADGE[mp.cat];
@@ -1115,6 +1131,245 @@ document.addEventListener('keydown', e=>{
   if(e.key==='ArrowLeft')  galStep(-1);
   if(e.key==='ArrowRight') galStep(1);
 });
+
+/* ── Gerar PDF ──────────────────────────────────────── */
+async function gerarPDF() {
+  const btn = document.getElementById('btn-pdf');
+  const orig = btn.innerHTML;
+  btn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Gerando PDF...';
+  btn.style.pointerEvents = 'none';
+  btn.style.opacity = '.75';
+
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+    const W = 210, H = 297, mg = 13;
+
+    // ── Helpers de cor ──────────────────────────────────
+    const G0=[11,61,46], G1=[20,92,64], OR=[232,144,26];
+    const BG=[244,241,232], WH=[255,255,255];
+    const TX=[24,40,30], T2=[58,82,68], T3=[122,152,128], BD=[216,228,220];
+    const sf = (...c)=>doc.setFillColor(...c);
+    const sd = (...c)=>doc.setDrawColor(...c);
+    const st = (...c)=>doc.setTextColor(...c);
+    function hexRGB(h){const r=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h);return r?{r:parseInt(r[1],16),g:parseInt(r[2],16),b:parseInt(r[3],16)}:null;}
+
+    // ── Carrega imagem como dataURL ──────────────────────
+    async function loadImg(src) {
+      return new Promise(res => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          const c = document.createElement('canvas');
+          c.width = img.naturalWidth || 400; c.height = img.naturalHeight || 300;
+          const ctx = c.getContext('2d');
+          ctx.fillStyle = '#F4F1E8'; ctx.fillRect(0,0,c.width,c.height);
+          ctx.drawImage(img,0,0);
+          res({ d:c.toDataURL('image/jpeg',.82), w:c.width, h:c.height });
+        };
+        img.onerror = () => res(null);
+        img.src = src + '?t=' + Date.now();
+      });
+    }
+
+    // ── CAPA ────────────────────────────────────────────
+    sf(...G0); doc.rect(0,0,W,H,'F');
+    sf(...G1); doc.rect(0,H-55,W,55,'F');
+    sf(9,48,35); doc.rect(0,H-28,W,28,'F');
+
+    // Logo
+    const logo = await loadImg('imagens/Agriplax_PNG.png');
+    sf(...WH); doc.roundedRect(mg,7,96,42,4,4,'F');
+    if(logo){
+      const r=Math.min(86/logo.w,34/logo.h);
+      const lw=logo.w*r, lh=logo.h*r;
+      doc.addImage(logo.d,'JPEG',mg+4+(86-lw)/2,7+4+(34-lh)/2,lw,lh);
+    }
+
+    // Título
+    st(...WH); doc.setFont('helvetica','bold'); doc.setFontSize(40);
+    doc.text('CATÁLOGO', mg, 82);
+    doc.setFontSize(22); st(...OR);
+    doc.text('DE PRODUTOS', mg, 96);
+    st(200,225,210); doc.setFont('helvetica','normal'); doc.setFontSize(9.5);
+    doc.text('Tecnologia e Inovação em Produtos Plásticos para o Agronegócio', mg, 110);
+
+    // Linha laranja
+    sd(...OR); doc.setLineWidth(1.5); doc.line(mg,118,100,118); doc.setLineWidth(.2);
+
+    // Stats
+    [{n:'20',l:'PRODUTOS'},{n:'6',l:'CATEGORIAS'},{n:'100%',l:'POLIETILENO'}].forEach((s,i)=>{
+      const sx=mg+i*57;
+      st(...OR); doc.setFont('helvetica','bold'); doc.setFontSize(28);
+      doc.text(s.n,sx,138);
+      st(160,200,180); doc.setFontSize(7); doc.setFont('helvetica','normal');
+      doc.text(s.l,sx,145);
+    });
+
+    // ISO badge
+    sf(...OR); doc.roundedRect(mg,158,30,9,2,2,'F');
+    st(...WH); doc.setFont('helvetica','bold'); doc.setFontSize(7);
+    doc.text('ISO 9001  CERT.',mg+15,163.5,{align:'center'});
+
+    // Contato na capa
+    st(...WH); doc.setFont('helvetica','bold'); doc.setFontSize(11);
+    doc.text('XALINGO S/A  \u00B7  AgriplaX', mg, H-44);
+    st(180,210,195); doc.setFont('helvetica','normal'); doc.setFontSize(8.5);
+    doc.text('BR 471, Km 147  \u00B7  CEP 96835-642  \u00B7  Santa Cruz do Sul/RS  \u00B7  Brasil', mg, H-36);
+    doc.text('(51) 3719-9800  \u00B7  agriplax@xalingo.com.br', mg, H-29);
+    st(...OR); doc.text('www.agriplax.com.br', mg, H-22);
+
+    // ── PÁGINAS DE PRODUTOS ──────────────────────────────
+    const CAT_LBL = {
+      caixamultiuso:'Caixa Multiuso', acessorios:'Plataforma',
+      adubo:'Reservatório de Adubo', sementes:'Reservatório de Sementes',
+      distribuicao:'Distribuição', fumageiras:'Fumageiras'
+    };
+    const CAT_ORD = ['caixamultiuso','acessorios','adubo','sementes','distribuicao','fumageiras'];
+    const sorted = [...PRODUCTS].sort((a,b)=>CAT_ORD.indexOf(a.cat)-CAT_ORD.indexOf(b.cat));
+
+    const COLS=2, PER_PAGE=4;
+    const HDR=21, COL_GAP=7, ROW_GAP=5;
+    const cW=(W-mg*2-COL_GAP)/COLS;   // ~89mm
+    const cH=(H-mg*2-HDR-ROW_GAP)/2;  // ~113mm
+    const IMG_H=Math.round(cH*.52);    // ~59mm
+
+    let posInPage=PER_PAGE, prevCat=null, pageNum=1;
+
+    function drawHdr(catLbl, pn){
+      sf(...G0); doc.rect(0,0,W,HDR,'F');
+      st(...OR); doc.setFont('helvetica','bold'); doc.setFontSize(11);
+      doc.text('AgriplaX',mg,9);
+      st(...WH); doc.setFont('helvetica','normal'); doc.setFontSize(7.5);
+      doc.text(' \u2014 Catálogo de Produtos',mg+22,9);
+      // pill categoria
+      doc.setFont('helvetica','bold'); doc.setFontSize(5.5);
+      const lbl=catLbl.toUpperCase();
+      const pw=doc.getTextWidth(lbl)+8;
+      sf(...OR); doc.roundedRect(W-mg-pw,3,pw,7,1.5,1.5,'F');
+      st(...WH); doc.text(lbl,W-mg-pw/2,7.5,{align:'center'});
+      // divisor
+      sd(...OR); doc.setLineWidth(.35); doc.line(mg,14,W-mg,14); doc.setLineWidth(.1);
+      // nº página
+      st(...T3); doc.setFont('helvetica','normal'); doc.setFontSize(6);
+      doc.text(String(pn),W/2,HDR-1.5,{align:'center'});
+    }
+
+    async function drawCard(p, col, row){
+      const x=mg+col*(cW+COL_GAP);
+      const y=mg+HDR+3+row*(cH+ROW_GAP);
+
+      // sombra
+      sf(210,222,215); doc.roundedRect(x+1.2,y+1.2,cW,cH,3,3,'F');
+      // fundo card
+      sf(...WH); doc.roundedRect(x,y,cW,cH,3,3,'F');
+      sd(...BD); doc.setLineWidth(.2); doc.roundedRect(x,y,cW,cH,3,3,'S');
+
+      // área da imagem
+      sf(...BG); doc.roundedRect(x+1,y+1,cW-2,IMG_H,2.5,2.5,'F');
+      const img=await loadImg(p.fotos[0]);
+      if(img){
+        const maxW=cW-10, maxH=IMG_H-6;
+        const r=Math.min(maxW/img.w,maxH/img.h);
+        const iw=img.w*r, ih=img.h*r;
+        doc.addImage(img.d,'JPEG',x+(cW-iw)/2,y+1+(IMG_H-ih)/2,iw,ih,undefined,'FAST');
+      }
+
+      // badge nº
+      sf(...G0); doc.roundedRect(x+3,y+3,15,6.5,1.5,1.5,'F');
+      st(...WH); doc.setFont('helvetica','bold'); doc.setFontSize(6);
+      doc.text(p.num,x+10.5,y+7.5,{align:'center'});
+
+      // badge qtd fotos
+      if(p.fotos.length>1){
+        sf(15,30,22); doc.roundedRect(x+cW-22,y+3,20,6.5,1.5,1.5,'F');
+        st(...WH); doc.setFont('helvetica','normal'); doc.setFontSize(5);
+        doc.text(p.fotos.length+' fotos',x+cW-12,y+7.5,{align:'center'});
+      }
+
+      // tag categoria
+      const bodyY=y+IMG_H+4;
+      sf(226,242,234); doc.roundedRect(x+3,bodyY,cW-6,6.5,1.5,1.5,'F');
+      st(26,96,64); doc.setFont('helvetica','bold'); doc.setFontSize(5);
+      doc.text((CAT_LBL[p.cat]||p.cat).toUpperCase(),x+cW/2,bodyY+4.5,{align:'center'});
+
+      // nome
+      const nameY=bodyY+12;
+      st(...TX); doc.setFont('helvetica','bold'); doc.setFontSize(8.5);
+      const lines=doc.splitTextToSize(p.nome,cW-6);
+      doc.text(lines.slice(0,2),x+3,nameY);
+
+      // specs
+      let sy=nameY+(lines.length>1?10:6);
+      doc.setFont('helvetica','normal'); doc.setFontSize(7); st(...T2);
+      doc.text('Material: '+p.material,x+3,sy);
+      if(p.dim){ sy+=4.5; doc.text('Dim: '+p.dim,x+3,sy); }
+      if(p.cap){
+        sy+=5;
+        sf(...BG); doc.roundedRect(x+3,sy-3.5,32,7,1.5,1.5,'F');
+        st(...OR); doc.setFont('helvetica','bold'); doc.setFontSize(7.5);
+        doc.text('Cap: '+p.cap,x+5,sy+1.5);
+      }
+
+      // obs
+      if(p.obs){
+        const obsY=y+cH-18;
+        sd(...BD); doc.setLineWidth(.15); doc.line(x+3,obsY,x+cW-3,obsY);
+        st(...T3); doc.setFont('helvetica','normal'); doc.setFontSize(5.8);
+        const obsLines=doc.splitTextToSize(p.obs,cW-6);
+        doc.text(obsLines.slice(0,2),x+3,obsY+4);
+      }
+
+      // swatches de cor
+      const swY=y+cH-7;
+      sd(...BD); doc.setLineWidth(.15); doc.line(x+3,swY-3,x+cW-3,swY-3);
+      st(...T3); doc.setFont('helvetica','normal'); doc.setFontSize(5.5);
+      doc.text('Cores:',x+3,swY+1.5);
+      const allC=p.cores.g.reduce((a,g)=>{
+        (p.cores.h[g]||[]).forEach((hex,i)=>a.push({hex,n:(p.cores.n[g]||[])[i]||''}));
+        return a;
+      },[]);
+      let swX=x+18;
+      allC.slice(0,10).forEach(({hex})=>{
+        const rgb=hexRGB(hex);
+        if(!rgb) return;
+        doc.setFillColor(rgb.r,rgb.g,rgb.b);
+        sd(170,180,175); doc.setLineWidth(.15);
+        doc.circle(swX+2.5,swY+1,2.5,'FD');
+        swX+=7;
+      });
+    }
+
+    // Loop de produtos
+    for(let i=0;i<sorted.length;i++){
+      const p=sorted[i];
+      const catChanged=p.cat!==prevCat;
+      if(posInPage>=PER_PAGE||catChanged){
+        doc.addPage(); pageNum++;
+        posInPage=0; prevCat=p.cat;
+        drawHdr(CAT_LBL[p.cat]||p.cat,pageNum);
+      }
+      await drawCard(p,posInPage%COLS,Math.floor(posInPage/COLS));
+      posInPage++;
+    }
+
+    // Rodapé final
+    sf(...G0); doc.rect(0,H-11,W,11,'F');
+    st(180,210,195); doc.setFont('helvetica','normal'); doc.setFontSize(7);
+    doc.text('XALINGO S/A \u00B7 AgriplaX \u00B7 agriplax.com.br \u00B7 (51) 3719-9800',W/2,H-3.5,{align:'center'});
+
+    doc.save('Catalogo_AgriplaX.pdf');
+    gtag('event','download_catalogo',{catalogo:'AgriplaX',formato:'PDF'});
+
+  } catch(e){
+    console.error('PDF error:',e);
+    alert('Erro ao gerar o PDF. Verifique o console.');
+  }
+
+  btn.innerHTML=orig;
+  btn.style.pointerEvents='';
+  btn.style.opacity='';
+}
 
 /* ── Init ───────────────────────────────────────────── */
 renderGrid();
