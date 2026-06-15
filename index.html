@@ -140,6 +140,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);-we
 .chip.dim{font-size:.65rem;font-family:'DM Sans',sans-serif}
 
 /* Category colour map */
+.cat-caixamultiuso .c-img{background:#F5F5F5}
+.cat-caixamultiuso .c-cat-tag{background:#E8E8E8;color:#222222}
 .cat-acessorios .c-img{background:#F0F1F3}
 .cat-acessorios .c-cat-tag{background:#EAECF0;color:#44546A}
 .cat-adubo .c-img{background:#FFFBF2}
@@ -360,7 +362,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);-we
       <div class="hdr-middle" style="margin-top:14px">
         <div class="stat"><div class="stat-n" id="stat-total">20</div><div class="stat-l">Produtos</div></div>
         <div class="hdr-sep"></div>
-        <div class="stat"><div class="stat-n">5</div><div class="stat-l">Categorias</div></div>
+        <div class="stat"><div class="stat-n">6</div><div class="stat-l">Categorias</div></div>
         <div class="hdr-sep"></div>
         <div class="stat"><div class="stat-n">100%</div><div class="stat-l">Polietileno</div></div>
         <div class="iso-badge">✓ ISO 9001</div>
@@ -382,8 +384,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);-we
     <button class="cat-btn active" data-cat="all" onclick="setFilter('all',this)">
       Todos <span class="cat-pill" id="cp-all">20</span>
     </button>
+    <button class="cat-btn" data-cat="caixamultiuso" onclick="setFilter('caixamultiuso',this)">
+      Caixa Multiuso <span class="cat-pill" id="cp-caixamultiuso">1</span>
+    </button>
     <button class="cat-btn" data-cat="acessorios" onclick="setFilter('acessorios',this)">
-      Peças e Acessórios <span class="cat-pill" id="cp-acessorios">4</span>
+      Plataforma <span class="cat-pill" id="cp-acessorios">3</span>
     </button>
     <button class="cat-btn" data-cat="adubo" onclick="setFilter('adubo',this)">
       Reservatório de Adubo <span class="cat-pill" id="cp-adubo">6</span>
@@ -479,22 +484,24 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);-we
 
 <script>
 const CATS = {
-  acessorios:   { label:'Peças e Acessórios' },
-  adubo:        { label:'Reservatório de Adubo' },
-  sementes:     { label:'Reservatório de Sementes' },
-  distribuicao: { label:'Distribuição' },
-  fumageiras:   { label:'Fumageiras' }
+  caixamultiuso: { label:'Caixa Multiuso' },
+  acessorios:    { label:'Plataforma' },
+  adubo:         { label:'Reservatório de Adubo' },
+  sementes:      { label:'Reservatório de Sementes' },
+  distribuicao:  { label:'Distribuição' },
+  fumageiras:    { label:'Fumageiras' }
 };
 
 const CAT_BADGE = {
-  acessorios:   'background:#EAECF0;color:#44546A',
-  adubo:        'background:#FEF3E4;color:#8C4C00',
-  sementes:     'background:#E6F2EC;color:#1A6040',
-  distribuicao: 'background:#EBF1FF;color:#1A3D8A',
-  fumageiras:   'background:#DCFCE7;color:#14532D'
+  caixamultiuso: 'background:#E8E8E8;color:#222222',
+  acessorios:    'background:#EAECF0;color:#44546A',
+  adubo:         'background:#FEF3E4;color:#8C4C00',
+  sementes:      'background:#E6F2EC;color:#1A6040',
+  distribuicao:  'background:#EBF1FF;color:#1A3D8A',
+  fumageiras:    'background:#DCFCE7;color:#14532D'
 };
 
-const CAT_PH = { acessorios:'⚙️', adubo:'📦', sementes:'🌾', distribuicao:'🔵', fumageiras:'🌿' };
+const CAT_PH = { caixamultiuso:'📦', acessorios:'⚙️', adubo:'📦', sementes:'🌾', distribuicao:'🔵', fumageiras:'🌿' };
 
 const PRODUCTS = [
   // ── Peças e Acessórios ──────────────────────────────────
@@ -712,7 +719,7 @@ const PRODUCTS = [
   },
   // ── Caixa Multiuso ─────────────────────────────────────
   {
-    num:'15', nome:'Caixa Multiuso', cat:'acessorios',
+    num:'15', nome:'Caixa Multiuso', cat:'caixamultiuso',
     material:'Polietileno Rotomoldado', dim:'500 × 600 × 670 mm', cap:'160 L',
     cores:{ g:['Cor'], h:{'Cor':['#1a1a1a']}, n:{'Cor':['Preto']} },
     fotos: [
