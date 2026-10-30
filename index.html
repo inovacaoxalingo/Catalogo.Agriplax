@@ -220,6 +220,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);-we
 .gal-main{flex:1;display:flex;align-items:center;justify-content:center;padding:24px;position:relative;overflow:hidden;min-height:240px}
 .gal-main img{max-width:100%;max-height:300px;object-fit:contain;transition:opacity .18s}
 .gal-main img.fade{opacity:0}
+.gal-main video{width:100%;max-height:320px;border-radius:8px;background:#f3f1ec;object-fit:contain}
+.gth{position:relative}
+.gth .play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(11,61,46,.28);color:#fff;font-size:1rem;pointer-events:none}
 .gal-ph{font-size:4rem;opacity:.15}
 .garr{
   position:absolute;top:50%;transform:translateY(-50%);
@@ -384,6 +387,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);-we
   .mgal{flex:none;border-right:none;border-bottom:1px solid var(--bdr)}
   .gal-main{min-height:200px;padding:16px}
   .gal-main img{max-height:210px}
+  .gal-main video{max-height:230px}
   .grid{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
 }
 @media(max-width:640px){
@@ -484,12 +488,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);-we
         <div class="gal-main" id="gal-main">
           <button class="garr left" id="garr-l" onclick="galStep(-1)">‹</button>
           <img id="g-img" src="" alt="" onerror="imgErr(this)">
+          <video id="g-vid" controls muted playsinline loop preload="metadata" style="display:none"></video>
           <div class="gal-ph" id="g-ph" style="display:none"></div>
           <button class="garr right" id="garr-r" onclick="galStep(1)">›</button>
         </div>
         <div class="gal-counter" id="g-ctr"></div>
         <div class="gal-toolbar">
-          <button class="gal-act" onclick="openZoom()">🔍 Ampliar</button>
+          <button class="gal-act" id="g-zoom" onclick="openZoom()">🔍 Ampliar</button>
           <button id="g-download" class="gal-act dwn" style="display:none" onclick="downloadPlanta()">⬇ Baixar Planta</button>
         </div>
         <div class="gal-thumbs" id="g-thumbs" style="display:none"></div>
@@ -807,7 +812,8 @@ const PRODUCTS = [
     material:'Polietileno', dim:null, cap:'10 L',
     cores:{ g:['Cor'], h:{'Cor':['#e2601a']}, n:{'Cor':['Laranja']} },
     fotos: [
-      'imagens/0333.2 - Adubadeira Manual 10 Litros - Laranja.png'
+      'imagens/0333.2 - Adubadeira Manual 10 Litros - Laranja.png',
+      'videos/adubadeira-0333-2-3-funcoes.mp4'
     ],
     obs:'Solução perfeita para a aplicação uniforme de fertilizantes líquidos ou granulados. Design ergonômico proporcionando conforto e eficiência no manuseio.'
   },
@@ -881,7 +887,8 @@ function renderGrid(){
   }
 
   g.innerHTML = items.map(p=>{
-    const badge = p.fotos.length > 1 ? `<div class="c-gallery-badge">📷 ${p.fotos.length}</div>` : '';
+    const nv = p.fotos.filter(f=>/\.mp4$/i.test(f)).length, ni = p.fotos.length-nv;
+    const badge = p.fotos.length > 1 ? `<div class="c-gallery-badge">${ni>1?`📷 ${ni}`:''}${nv?`${ni>1?' · ':''}🎬 vídeo`:''}</div>` : '';
     const capChip = p.cap ? `<span class="chip cap">${p.cap}</span>` : '';
     return `<div class="card cat-${p.cat}" onclick="openMod('${p.num}')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openMod('${p.num}')">
   <div class="c-img">
@@ -926,7 +933,8 @@ function openMod(num){
   specs.push({l:'Material',  v:mp.material});
   if(mp.dim) specs.push({l:'Dimensões', v:mp.dim, full:!mp.cap});
   if(mp.cap) specs.push({l:'Capacidade', v:mp.cap, hi:true});
-  specs.push({l:'Galeria de fotos', v:`${mp.fotos.length} ${mp.fotos.length!==1?'imagens':'imagem'}`});
+  { const nv=mp.fotos.filter(isVid).length, ni=mp.fotos.length-nv;
+    specs.push({l:'Galeria de fotos', v:`${ni} ${ni!==1?'imagens':'imagem'}${nv?` · ${nv} vídeo${nv>1?'s':''}`:''}`}); }
 
   document.getElementById('m-specs').innerHTML = specs.map(s=>
     `<div class="si${s.full?' sg-full':''}">
@@ -990,8 +998,12 @@ function trocarCor(nm){
 }
 
 /* ── Gallery ────────────────────────────────────────── */
+const isVid = f => /\.mp4$/i.test(f);
+const vidPoster = f => f.replace(/\.mp4$/i,'-poster.jpg');
 function renderGallery(){
   const n = mp.fotos.length;
+  const vid = document.getElementById('g-vid');
+  const zBtn = document.getElementById('g-zoom');
   const img    = document.getElementById('g-img');
   const ph     = document.getElementById('g-ph');
   const ctr    = document.getElementById('g-ctr');
@@ -1000,6 +1012,17 @@ function renderGallery(){
   const ar     = document.getElementById('garr-r');
   const dlBtn  = document.getElementById('g-download');
 
+  if(isVid(mp.fotos[gi])){
+    img.style.display='none'; document.getElementById('g-ph').style.display='none';
+    if(!vid.src.endsWith(encodeURI(mp.fotos[gi]))){ vid.poster=vidPoster(mp.fotos[gi]); vid.src=mp.fotos[gi]; }
+    vid.style.display='block'; zBtn.style.display='none';
+    document.getElementById('g-download').style.display='none';
+    vid.play().catch(()=>{});
+    try{ gtag('event','assistir_video',{produto:mp.nome,codigo:mp.num}); }catch(e){}
+  } else {
+    vid.pause(); vid.style.display='none'; zBtn.style.display='';
+  }
+  if(!isVid(mp.fotos[gi])){
   img.classList.add('fade');
   img.onload  = ()=>img.classList.remove('fade');
   img.onerror = ()=>imgErr(img);
@@ -1019,6 +1042,7 @@ function renderGallery(){
   } else {
     dlBtn.style.display = 'none';
   }
+  }
 
   if(n > 1){
     ctr.textContent = `${gi+1} / ${n}`;
@@ -1027,7 +1051,7 @@ function renderGallery(){
     thumbs.style.display = 'flex';
     thumbs.innerHTML = mp.fotos.map((f,i)=>
       `<div class="gth${i===gi?' on':''}" onclick="galGo(${i})">
-        <img src="${f}" alt="thumb ${i+1}" loading="lazy" onerror="this.parentElement.style.opacity='.3'">
+        <img src="${isVid(f)?vidPoster(f):f}" alt="${isVid(f)?'vídeo':'thumb '+(i+1)}" loading="lazy" onerror="this.parentElement.style.opacity='.3'">${isVid(f)?'<span class="play">▶</span>':''}
       </div>`
     ).join('');
   } else {
@@ -1155,6 +1179,7 @@ zWrap.addEventListener('touchend', ()=>{ zDragging=false; });
 
 /* ── Modal close ────────────────────────────────────── */
 function closeMod(){
+  const v=document.getElementById('g-vid'); if(v){ v.pause(); v.removeAttribute('src'); v.load(); v.style.display='none'; }
   document.getElementById('ov').classList.remove('open');
   document.body.style.overflow = '';
   mp = null;
