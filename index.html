@@ -285,6 +285,20 @@ h1,h2,h3,p{margin:0}
 .aviso{position:fixed;left:50%;bottom:90px;transform:translate(-50%,16px);z-index:300;background:var(--noite);color:var(--campo);padding:12px 18px;border-radius:999px;font-size:14.5px;font-weight:500;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:calc(100vw - 32px);text-align:center}
 .aviso.ver{opacity:1;transform:translate(-50%,0)}
 
+/* ── Escolher o número do WhatsApp ──────────────────────── */
+.wpp-dlg{width:min(420px,calc(100vw - 32px));border-radius:8px;padding:24px 22px 20px;position:relative}
+.wpp-dlg[open]{animation:abre .18s ease}
+.wpp-dlg h2{font-family:var(--serif);font-weight:500;font-size:28px;line-height:1.1;padding-right:52px}
+.wpp-dlg > p{margin-top:8px;color:var(--terra);font-size:15px}
+.wpp-dlg .fechar{position:absolute;top:14px;right:14px}
+.wpp-lista{list-style:none;margin:18px 0 0;padding:0;display:grid;gap:10px}
+.wpp-lista a{display:flex;align-items:center;gap:14px;min-height:64px;padding:10px 16px;border:1.5px solid var(--palha);border-radius:var(--r-ctl);background:#fff;color:var(--noite);text-decoration:none}
+.wpp-lista a:hover{border-color:var(--teal)}
+.wpp-lista svg{width:26px;height:26px;flex:none;color:var(--teal)}
+.wpp-lista b{display:block;font:700 21px/1.1 var(--sans);font-stretch:85%}
+.wpp-lista small{display:block;margin-top:3px;font-size:13.5px;color:var(--terra)}
+.contato-wpp a{display:inline-block;padding:3px 0}
+
 /* ── Diálogos (ficha, zoom, orçamento) ─────────────────── */
 dialog{border:0;padding:0;margin:auto;color:var(--noite);background:var(--papel);max-width:none;max-height:none}
 dialog::backdrop{background:rgba(15,20,15,.58)}
@@ -571,8 +585,8 @@ dialog::backdrop{background:rgba(15,20,15,.58)}
       <p class="intro">Orçamentos e dúvidas técnicas sobre qualquer peça do catálogo.</p>
       <div class="contato-grade">
         <div class="bloco-wpp">
-          <h3>WhatsApp</h3>
-          <p><a href="#" class="js-wpp" target="_blank" rel="noopener">(51) 3719-9801</a></p>
+          <h3>WhatsApp do comercial</h3>
+          <p id="contato-wpp"></p>
           <a class="btn btn-teal btn-grande js-wpp" href="#" target="_blank" rel="noopener">Conversar no WhatsApp</a>
         </div>
         <div>
@@ -695,6 +709,13 @@ dialog::backdrop{background:rgba(15,20,15,.58)}
   </div>
 </dialog>
 
+<dialog class="wpp-dlg" id="wpp" aria-labelledby="wpp-tit">
+  <h2 id="wpp-tit">Falar no WhatsApp</h2>
+  <p>Escolha um número. A mensagem já vai escrita.</p>
+  <ul class="wpp-lista" id="wpp-lista"></ul>
+  <button class="fechar" id="wpp-fechar" type="button" aria-label="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+</dialog>
+
 <script>
 /* ════════════════════════════════════════════════════════════
    CONFIGURAÇÃO — tudo que costuma mudar fica aqui
@@ -703,7 +724,10 @@ const CONFIG = {
   // Aberto pelo arquivo no computador: busca imagens do site publicado. No GitHub Pages: usa as pastas do repositório.
   base: location.protocol === 'file:' ? 'https://inovacaoxalingo.github.io/Catalogo.Agriplax/' : '',
   urlPublica: 'https://inovacaoxalingo.github.io/Catalogo.Agriplax/',
-  whatsapp: '555137199801',            // WhatsApp: (51) 3719-9801
+  whatsapps: [                          // WhatsApp do comercial: o cliente escolhe o número na hora
+    { numero: '555199104815', exibe: '(51) 99910-4815', nome: 'Comercial AgriplaX' },
+    { numero: '555199762071', exibe: '(51) 99976-2071', nome: 'Comercial AgriplaX' }
+  ],
   email: 'agriplax@xalingo.com.br',
   telefone: '(51) 3719-9800',
   mostrarISO: false,                   // CONFIRMAR certificado ISO 9001 antes de ligar (aparece no rodapé e no PDF)
@@ -1078,7 +1102,7 @@ function metaLinha(k) {
   }
   return t;
 }
-function linkWpp(msg) { return 'https://wa.me/' + CONFIG.whatsapp + '?text=' + encodeURIComponent(msg); }
+function linkWpp(msg, i = 0) { return 'https://wa.me/' + CONFIG.whatsapps[i].numero + '?text=' + encodeURIComponent(msg); }
 const linkProduto = p => CONFIG.urlPublica + '?p=' + p.num;
 
 let avisoT;
@@ -1622,7 +1646,7 @@ async function gerarPDF() {
     doc.setFont('helvetica', 'bold'); doc.setFontSize(10); cor('setTextColor', NOITE);
     doc.text('Fale com a fábrica', M, cy);
     doc.setFont('helvetica', 'normal'); doc.setFontSize(9.5); cor('setTextColor', TERRA);
-    ['WhatsApp (51) 3719-9801', 'Telefone ' + CONFIG.telefone, CONFIG.email, 'BR 471, Km 147, CEP 96835-642, Santa Cruz do Sul (RS)'].forEach((t, i) => doc.text(t, M, cy + 7 + i * 5.4));
+    ['WhatsApp ' + CONFIG.whatsapps.map(w => w.exibe).join(' e '), 'Telefone ' + CONFIG.telefone, CONFIG.email, 'BR 471, Km 147, CEP 96835-642, Santa Cruz do Sul (RS)'].forEach((t, i) => doc.text(t, M, cy + 7 + i * 5.4));
     doc.setFont('helvetica', 'bold'); cor('setTextColor', NOITE); doc.text('Catálogo online', 120, cy);
     doc.setFont('helvetica', 'normal'); cor('setTextColor', TEAL); doc.textWithLink('inovacaoxalingo.github.io/Catalogo.Agriplax', 120, cy + 7, { url: CONFIG.urlPublica });
     cor('setTextColor', TERRA); doc.text('Atualizado em ' + hoje, 120, cy + 12.4);
@@ -1640,7 +1664,7 @@ async function gerarPDF() {
       doc.setFont('helvetica', 'normal'); doc.text('Catálogo de produtos', M + 19, 9);
       doc.text(String(pag), W - M, 9, { align: 'right' });
       doc.setFontSize(7.5); cor('setTextColor', TERRA);
-      doc.text('WhatsApp (51) 3719-9801     ' + CONFIG.email + '     inovacaoxalingo.github.io/Catalogo.Agriplax', W / 2, H - 7, { align: 'center' });
+      doc.text('WhatsApp ' + CONFIG.whatsapps.map(w => w.exibe).join(' e ') + '     ' + CONFIG.email + '     inovacaoxalingo.github.io/Catalogo.Agriplax', W / 2, H - 7, { align: 'center' });
       y = TOP;
     };
     for (const k of linhas()) {
@@ -1698,6 +1722,32 @@ $('#btn-pdf').addEventListener('click', gerarPDF);
    ════════════════════════════════════════════════════════════ */
 $$('img[data-src]').forEach(i => { i.src = CONFIG.base + i.dataset.src; });
 const wppGeral = linkWpp('Olá! Vim pelo catálogo AgriplaX e gostaria de falar com a equipe.');
+// Números na seção de contato (cada um abre direto o seu WhatsApp)
+$('#contato-wpp').classList.add('contato-wpp');
+$('#contato-wpp').innerHTML = CONFIG.whatsapps.map((w, i) => `<a href="${linkWpp('Olá! Vim pelo catálogo AgriplaX e gostaria de falar com a equipe.', i)}" target="_blank" rel="noopener" data-direto data-i="${i}">${esc(w.exibe)}</a>`).join('<br>');
+$$('#contato-wpp a').forEach(a => a.addEventListener('click', () => track('whatsapp_numero', { numero: CONFIG.whatsapps[+a.dataset.i].exibe, origem: 'contato' })));
+// Com mais de um número, todo botão de WhatsApp abre a escolha; a mensagem (produto, lista) vai junto
+const wppDlg = $('#wpp'), ICONE_WPP = $('#fab-wpp svg').outerHTML;
+let wppVolta = null;
+function abrirEscolhaWpp(texto, origem) {
+  $('#wpp-lista').innerHTML = CONFIG.whatsapps.map((w, i) => `<li><a href="${linkWpp(texto, i)}" target="_blank" rel="noopener" data-i="${i}">${ICONE_WPP}<span><b>${esc(w.exibe)}</b><small>${esc(w.nome)}</small></span></a></li>`).join('');
+  wppVolta = origem; wppDlg.showModal(); $('#wpp-lista a').focus();
+}
+document.addEventListener('click', e => {
+  const a = e.target.closest('a[href^="https://wa.me/"]');
+  if (!a || CONFIG.whatsapps.length < 2 || a.hasAttribute('data-direto') || a.closest('#wpp')) return;
+  if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || e.button) return;
+  e.preventDefault();
+  abrirEscolhaWpp(new URL(a.href).searchParams.get('text') || '', a);
+});
+$('#wpp-lista').addEventListener('click', e => {
+  const a = e.target.closest('a'); if (!a) return;
+  track('whatsapp_numero', { numero: CONFIG.whatsapps[+a.dataset.i].exibe, origem: wppVolta ? (wppVolta.id || 'contato') : '' });
+  setTimeout(() => wppDlg.close(), 0);
+});
+$('#wpp-fechar').addEventListener('click', () => wppDlg.close());
+wppDlg.addEventListener('click', e => { const r = wppDlg.getBoundingClientRect(); if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) wppDlg.close(); });
+wppDlg.addEventListener('close', () => { if (wppVolta && wppVolta.isConnected) wppVolta.focus({ preventScroll: true }); });
 ['#topo-wpp', '#cta-wpp', '#fab-wpp'].forEach(s => $(s).href = wppGeral);
 $$('.js-wpp').forEach(a => a.href = wppGeral);
 ['#topo-wpp', '#cta-wpp', '#fab-wpp', '.js-wpp'].forEach(s => $$(s).forEach(a => a.addEventListener('click', () => track('whatsapp_geral', { origem: a.id || 'contato' }))));
